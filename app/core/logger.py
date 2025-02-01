@@ -1,6 +1,9 @@
+"""Logging configuration for the bot."""
+
 import logging
 import sys
 from pathlib import Path
+from logging.handlers import RotatingFileHandler
 
 import colorlog
 
@@ -14,7 +17,7 @@ def setup_logger(name: str = "veka") -> logging.Logger:
         return logger
     
     # Set log level from config
-    logger.setLevel(getattr(logging, config.logging.level.upper()))
+    logger.setLevel(getattr(logging, config.logging.log_level.upper()))
     
     # Create console handler with color formatting
     console_handler = colorlog.StreamHandler(sys.stdout)
@@ -32,10 +35,15 @@ def setup_logger(name: str = "veka") -> logging.Logger:
     )
     
     # Create file handler
-    log_file = Path(config.logging.file)
-    log_file.parent.mkdir(exist_ok=True)
-    file_handler = logging.FileHandler(log_file)
-    file_handler.setFormatter(logging.Formatter(config.logging.format))
+    log_file = Path(config.logging.log_file)
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+    
+    file_handler = RotatingFileHandler(
+        log_file,
+        maxBytes=config.logging.max_file_size,
+        backupCount=config.logging.backup_count
+    )
+    file_handler.setFormatter(logging.Formatter(config.logging.log_format))
     
     # Add handlers to logger
     logger.addHandler(console_handler)
