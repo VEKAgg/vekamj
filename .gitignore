@@ -79,7 +79,3 @@ config.yaml
 # OS specific
 .DS_Store
 Thumbs.db 
-
-
-# github workflow ignore
-.github/workflows/
